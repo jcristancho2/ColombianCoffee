@@ -37,6 +37,8 @@ ColombianCoffee/
     │   │   │   └── Entities
     │   │   └── Infraestructure
     │   │       └── Repositories
+    |   ├── MainMenu
+    |   |       └── UI
     │   └── Varieties
     │       ├── Application
     │       │   ├── Interfaces
@@ -98,11 +100,10 @@ dotnet run
 
 ## 🧑‍💻 Autor
 
-- [**Jorge Andrés Cristancho**](https://github.com/jcristancho2)
-- [**Luis Felipe Díaz Correa**](https://github.com/LFDIAZDEV2209)
-- [**Sheyla Esther Samur Rojas**](https://github.com/sheyla08samur)
-
-- [**Leidy Johana Niño Villegas**](https://github.com/LeidyJohanaVillegas)
+- [**Jorge Andrés Cristancho**](https://github.com/jcristancho2) - Lider de proyecto
+- [**Luis Felipe Díaz Correa**](https://github.com/LFDIAZDEV2209) - Desarrollador Fullstack
+- [**Sheyla Esther Samur Rojas**](https://github.com/sheyla08samur) - Desarrollo Base de Datos /UX
+- [**Leidy Johana Niño Villegas**](https://github.com/LeidyJohanaVillegas) - Desarrollador Fullstack /Ux
 
 
 
