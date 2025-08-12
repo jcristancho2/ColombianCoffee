@@ -57,7 +57,7 @@ ColombianCoffee/
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/<usuario>/ColombianCoffee.git
+git clone https://github.com/jcristancho2/ColombianCoffee.git
 cd ColombianCoffee
 
 # Instalar dependencias de .NET
