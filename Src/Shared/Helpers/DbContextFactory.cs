@@ -12,7 +12,7 @@ namespace ColombianCoffee.Src.Shared.Helpers
 {
     public class DbContextFactory
     {
-                public static AppDbContext Create()
+        public static AppDbContext Create()
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
