@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
+using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
 
-//asignacion de las entidades
 
 namespace ColombianCoffee.Src.Shared.Contexts
 {
@@ -15,8 +10,12 @@ namespace ColombianCoffee.Src.Shared.Contexts
         {
         }
 
-        // Define DbSets for your entities here
-        // public DbSet<YourEntity> YourEntities { get; set; }
+        public DbSet<Variety> Varieties { get; set; }
+        public DbSet<Species> Species { get; set; }
+        public DbSet<GeneticGroup> GeneticGroup { get; set; }
+        public DbSet<Lineage> Lineage { get; set; }
+        public DbSet<AltitudeQuality> AltitudeQuality { get; set; }
+        public DbSet<MeasurementUnit> MeasurementUnit { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
