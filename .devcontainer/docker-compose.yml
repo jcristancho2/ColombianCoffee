@@ -5,39 +5,43 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     container_name: colombiancoffee-app
-    command: sleep infinity  # Mantiene el contenedor activo para desarrollo
+    command: sleep infinity
     volumes:
-      - ..:/workspaces:cached  # Sincroniza el código con el host
+      - ..:/workspaces:cached
     networks:
       - devnet
     depends_on:
       mysql-db:
         condition: service_healthy
     environment:
-      - ConnectionStrings__DefaultConnection=Server=mysql-db;Database=coffeedb;User=root;Password=admin
-    tty: true  # Para consola interactiva (Spectre.Console)
+      - ConnectionStrings__DefaultConnection=Server=mysql-db;Database=testdb;User=root;Password=admin;Port=3307
+    tty: true
     stdin_open: true
+
   mysql-db:
     image: mysql:8.4
     container_name: mysql-db-container
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: testdb
+    command: --port=3307
     ports:
-      - "3307:3306"  # Expone MySQL al host
+      - "3307:3307"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
       - devnet
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -padmin --silent"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -padmin --port=3307 --silent"]
       interval: 10s
       timeout: 5s
       retries: 20
       start_period: 30s
+
 volumes:
   mysql-data:
+
 networks:
   devnet:
     driver: bridge
