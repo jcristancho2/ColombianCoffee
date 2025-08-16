@@ -51,7 +51,7 @@ public class Program
                         {
                             SessionManager.validateRole(UserRole.Admin);
                             Console.WriteLine("✅ Acceso concedido: módulo ADMIN.");
-                            mainMenu.Show();
+                            _ = mainMenu.Show();
                         }
                         catch (Exception ex)
                         {
@@ -64,7 +64,7 @@ public class Program
                         {
                             SessionManager.validateRole(UserRole.Usuario);
                             Console.WriteLine("✅ Acceso concedido: módulo USUARIO.");
-                            mainMenu.Show();
+                            _ = mainMenu.Show();
                         }
                         catch (Exception ex)
                         {

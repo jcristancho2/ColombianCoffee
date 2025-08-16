@@ -1,6 +1,6 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
-using System.Linq;
 using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
 using ColombianCoffee.Modules.Varieties.Domain.Entities;
 
@@ -9,13 +9,12 @@ namespace ColombianCoffee.Src.Shared.Contexts
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Variety> Varieties { get; set; }
         public DbSet<Species> Species { get; set; }
         public DbSet<GeneticGroup> GeneticGroup { get; set; }
@@ -36,7 +35,7 @@ namespace ColombianCoffee.Src.Shared.Contexts
                 entity.HasKey(u => u.Id);
 
                 entity.Property(u => u.Username)
-                    .HasColumnName("Name") // 🔹 Mapea Username en C# a Name en MySQL
+                    .HasColumnName("Name")
                     .IsRequired()
                     .HasMaxLength(100);
 
@@ -51,16 +50,13 @@ namespace ColombianCoffee.Src.Shared.Contexts
                 entity.Property(u => u.Role)
                     .IsRequired();
 
-                // Índice único para email
                 entity.HasIndex(u => u.Email)
                     .IsUnique();
 
-                // Opcional: índice único para username
                 entity.HasIndex(u => u.Username)
                     .IsUnique();
             });
 
-            // 🔹 Convención global: todos los nombres de tablas en minúsculas
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 var tableName = entity.GetTableName();
