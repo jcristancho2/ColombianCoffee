@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
-using ColombianCoffee.src.Shared.Context;
+using ColombianCoffee.Src.Shared.Contexts;
 
 namespace ColombianCoffee.src.Modules.Varieties.Infrastructure;
 
