@@ -1,19 +1,29 @@
 using ColombianCoffee.Src.Shared.Contexts;
 using ColombianCoffee.Src.Shared.Utils;
+using ColombianCoffee.Src.Modules.Auth.Application.Services;
+using ColombianCoffee.Src.Modules.Auth.Application.UI;
+using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
+using ColombianCoffee.Src.Modules.Auth.Application.Interfaces;
 using Spectre.Console;
+
 
 namespace ColombianCoffee.Src.Modules.MainMenu;
 
 public class MainMenu
 {
     private readonly AppDbContext _dbContext;
+    private readonly AuthMenu _authMenu;
 
     public MainMenu(AppDbContext dbContext)
     {
         _dbContext = dbContext;
+
+        IUserRepository userRepo = new UserRepository(_dbContext);
+        var authService = new AuthService(userRepo);
+        _authMenu = new AuthMenu(authService);
     }
 
-    public void Show()
+    public async Task Show()
     {
         while (true)
         {
@@ -39,11 +49,13 @@ public class MainMenu
                 case "Sign up":
                     Console.Clear();
                     AnsiConsole.WriteLine("Funcionalidad de registro");
+                    await _authMenu.Register();
                     ScreenController.PauseScreen();
                     break;
                 case "Log in":
                     Console.Clear();
                     AnsiConsole.WriteLine("Funcionalidad de inicio de sesión");
+                    await _authMenu.Login();
                     ScreenController.PauseScreen();
                     break;
                 case "Exit":
