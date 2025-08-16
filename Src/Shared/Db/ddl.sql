@@ -102,10 +102,11 @@ CREATE TABLE varieties (
 );
 
 -- Tabla de usuarios para login básico
-CREATE TABLE app_user (
+CREATE TABLE users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    Name VARCHAR(50) NOT NULL,
+    Email VARCHAR(150) NOT NULL,
+    passwordHash VARCHAR(255) NOT NULL,
     role ENUM('admin', 'user') NOT NULL
 );
 
@@ -113,9 +114,11 @@ CREATE TABLE app_user (
 -- ÍNDICES PARA OPTIMIZAR FILTROS DEL PROYECTO
 -- =====================================================
 
--- Índice para buscar rápido por usuario
-CREATE INDEX idx_app_user_username ON app_user(username);
+-- Índice para buscar rápido por usuario-- Índice para buscar rápido por nombre de usuario
+CREATE INDEX idx_users_name ON users(Name);
 
+-- Índice para buscar rápido por email
+CREATE INDEX idx_users_email ON users(Email);
 -- Índices para filtros principales
 CREATE INDEX idx_varieties_plant_height ON varieties(plant_height);
 CREATE INDEX idx_varieties_bean_size ON varieties(bean_size);
