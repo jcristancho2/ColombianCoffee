@@ -6,6 +6,7 @@ using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
 using ColombianCoffee.Src.Modules.Auth.Application.Interfaces;
 using ColombianCoffee.Src.Shared.Contexts;
 using ColombianCoffee.Src.Modules.Auth.Application.Services;
+using Spectre.Console;
 
 namespace ColombianCoffee.Src.Modules.Auth.Application.UI
 {
@@ -41,39 +42,53 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.UI
             }
         }
 
-        private async Task Register()
+        public async Task Register()
         {
-            Console.Write("Username: ");
-            string username = Console.ReadLine()!;
-            Console.Write("Email: ");
-            string email = Console.ReadLine()!;
-            Console.Write("Password: ");
-            string password = Console.ReadLine()!;
-            Console.Write("Role (Admin/Usuario): ");
-            string roleInput = Console.ReadLine()!;
-            UserRole role = Enum.Parse<UserRole>(roleInput, true);
+            var username = AnsiConsole.Ask<string>("Ingrese [green]Username[/]:");
+            var email = AnsiConsole.Ask<string>("Ingrese [green]Email[/]:");
+            var password = AnsiConsole.Prompt(
+                new TextPrompt<string>("Ingrese [green]Password[/]:")
+                    .PromptStyle("red")
+                    .Secret()
+            );
+            var roleInput = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Seleccione el [green]Rol[/]:")
+                    .AddChoices("Admin", "Usuario")
+            );
+
+            var role = Enum.Parse<UserRole>(roleInput, true);
 
             await _authService.RegisterAsync(username, email, password, role);
-            Console.WriteLine("Usuario registrado correctamente!");
+            AnsiConsole.MarkupLine("[bold green]✅ Usuario registrado correctamente![/]");
+            AnsiConsole.MarkupLine($"[yellow]Usuario:[/] {username} | [yellow]Email:[/] {email}");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("[grey]Presione ENTER para continuar...[/]");
+            Console.ReadLine();
         }
 
-        private async Task Login()
+        public async Task Login()
         {
-            Console.Write("Username o Email: ");
-            string usernameOrEmail = Console.ReadLine()!;
-            Console.Write("Password: ");
-            string password = Console.ReadLine()!;
+            var usernameOrEmail = AnsiConsole.Ask<string>("Ingrese [green]Username o Email[/]:");
+            var password = AnsiConsole.Prompt(
+                new TextPrompt<string>("Ingrese [green]Password[/]:")
+                    .PromptStyle("red")
+                    .Secret()
+            );
 
             try
             {
                 var user = await _authService.LoginAsync(usernameOrEmail, password);
                 SessionManager.Login(user);
-                Console.WriteLine($"Bienvenido {user.Username}! Rol: {user.Role}");
+                AnsiConsole.MarkupLine($"[bold green]Bienvenido {user.Username}![/] [yellow]Rol:[/] {user.Role}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                AnsiConsole.MarkupLine($"[red]❌ {ex.Message}[/]");
             }
+
+            AnsiConsole.MarkupLine("[grey]Presione ENTER para continuar...[/]");
+            Console.ReadLine();
         }
         
     }
