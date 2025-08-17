@@ -18,7 +18,6 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.Services
             _repo = repo;
         }
 
-        // Registro
         public async Task<bool> RegisterAsync(string username, string email, string password, UserRole role)
         {
             if (await _repo.GetUsernameAsync(username) != null)
@@ -26,7 +25,7 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.Services
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
-            User user = new User
+            var user = new User
             {
                 Username = username,
                 Email = email,
@@ -38,7 +37,6 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.Services
             return true;
         }
 
-        // Login
         public async Task<User> LoginAsync(string usernameOrEmail, string password)
         {
             var user = await _repo.GetUsernameAsync(usernameOrEmail)
