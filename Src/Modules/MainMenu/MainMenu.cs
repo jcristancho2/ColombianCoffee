@@ -21,11 +21,11 @@ public class MainMenu
     {
         _dbContext = dbContext;
 
-        var userRepository = new UserRepository(DbContextFactory.Create());
+        var userRepository = new UserRepository(_dbContext);
         var authService = new AuthService(userRepository);
         _authMenu = new AuthMenu(authService);
 
-        var varietyRepository = new VarietyRepository(DbContextFactory.Create());
+        var varietyRepository = new VarietyRepository(_dbContext);
         var varietyService = new VarietyService(varietyRepository);
         _varietyUI = new VarietyUI(varietyService);
     }
@@ -64,33 +64,33 @@ public class MainMenu
         {
             case "Sign up":
                 Console.Clear();
-                AnsiConsole.WriteLine("Funcionalidad de registro");
-                await _authMenu.Register();
-                ScreenController.PauseScreen();
+                await _authMenu.Register(); // Registro -> vuelve al menú principal
                 break;
 
             case "Log in":
                 Console.Clear();
-                AnsiConsole.WriteLine("Funcionalidad de inicio de sesión");
-                await _authMenu.Login();
-                ScreenController.PauseScreen();
+                var user = await _authMenu.Login(); // Login -> devuelve User?
+                if (user != null && user.Role == UserRole.admin)
+                {
+                    Console.Clear();
+                    await _varietyUI.Show(); // Abre VarietyUI después de login
+                }
                 break;
 
             case "Exit":
                 Console.Clear();
                 AnsiConsole.WriteLine("Saliendo del programa...");
-                ScreenController.PauseScreen();
                 Environment.Exit(0);
                 break;
         }
     }
 
     private async Task ShowAuthenticatedMenu()
-       {
+    {
         var user = SessionManager.CurrentUser!;
         AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username} ({user.Role})[/]");
 
-        var choices = user.Role == UserRole.Admin
+        var choices = user.Role == UserRole.admin
             ? new[] { "Manage Varieties", "Log out" }
             : new[] { "Log out" };
 
@@ -103,24 +103,15 @@ public class MainMenu
         switch (selection)
         {
             case "Manage Varieties":
-                try
-                {
-                    SessionManager.validateRole(UserRole.Admin); // Validar rol
-                    Console.Clear();
-                    AnsiConsole.WriteLine("Gestión de variedades de café");
-                    await _varietyUI.Show();
-                }
-                catch (Exception ex)
-                {
-                    AnsiConsole.MarkupLine($"[red]❌ {ex.Message}[/]");
-                }
-                ScreenController.PauseScreen();
+                Console.Clear();
+                await _varietyUI.Show();
                 break;
 
             case "Log out":
                 SessionManager.Logout();
                 AnsiConsole.MarkupLine("[yellow]Sesión cerrada.[/]");
-                ScreenController.PauseScreen();
+                Console.WriteLine("Presione ENTER para continuar...");
+                Console.ReadLine();
                 break;
         }
     }
