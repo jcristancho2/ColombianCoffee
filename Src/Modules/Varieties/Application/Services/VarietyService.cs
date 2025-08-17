@@ -3,16 +3,19 @@ using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
 using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
 using ColombianCoffee.src.Modules.Varieties.Infrastructure;
+using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
 
 namespace ColombianCoffee.src.Modules.Varieties.Application.Services
 {
     public sealed class VarietyService : IVarietyService
     {
         private readonly IVarietyRepository _varietyRepository;
+        private readonly IPdfGenerator _pdfGenerator;
 
-        public VarietyService(IVarietyRepository varietyRepository)
+        public VarietyService(IVarietyRepository varietyRepository, IPdfGenerator pdfGenerator)
         {
             _varietyRepository = varietyRepository;
+            _pdfGenerator = pdfGenerator;
         }
 
         public async Task<IEnumerable<VarietyIdNameDto>> GetFilteredVarietiesAsync(
@@ -106,6 +109,46 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
                 AltitudeUnit = variety.AltitudeUnit?.Name,
                 ImageUrl = variety.ImageUrl
             };
+        }
+        // Nuevo método para exportar a PDF
+        public async Task<string> ExportVarietyToPdfAsync(uint varietyId, string outputDirectory = "Exports")
+        {
+            var variety = await _varietyRepository.GetByIdAsync(varietyId);
+            if (variety == null)
+                throw new KeyNotFoundException($"Variety with id {varietyId} not found");
+
+            // Crear directorio si no existe
+            Directory.CreateDirectory(outputDirectory);
+
+            var fileName = $"Variety_{variety.Id}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            var filePath = Path.Combine(outputDirectory, fileName);
+
+            await _pdfGenerator.GenerateCoffeeVarietyPdf(variety, filePath);
+
+            return filePath;
+        }
+
+        // Método opcional para exportar listado filtrado
+        public async Task<string> ExportFilteredVarietiesToPdfAsync(
+            VarietyFilterDto filters, 
+            string outputDirectory = "Exports",
+            CancellationToken ct = default)
+        {
+            var varieties = await GetFilteredVarietiesAsync(filters, ct);
+            var varietyEntities = await _varietyRepository.Query()
+                .Where(v => varieties.Select(x => x.Id).Contains(v.Id))
+                .ToListAsync(ct);
+
+            if (!varietyEntities.Any())
+                throw new InvalidOperationException("No varieties match the specified filters");
+
+            Directory.CreateDirectory(outputDirectory);
+            var fileName = $"VarietiesReport_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            var filePath = Path.Combine(outputDirectory, fileName);
+
+            await _pdfGenerator.GenerateCoffeeVarietiesReportPdf(varietyEntities, filePath);
+
+            return filePath;
         }
     }
 }
