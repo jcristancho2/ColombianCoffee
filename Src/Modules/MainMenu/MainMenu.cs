@@ -41,12 +41,15 @@ public class MainMenu
                     .Color(Color.Green)
             );
 
+            // Debug: Mostrar estado de la sesión
             if (SessionManager.CurrentUser != null)
             {
+                AnsiConsole.MarkupLine($"[yellow]DEBUG: Usuario autenticado: {SessionManager.CurrentUser.Username} ({SessionManager.CurrentUser.Role})[/]");
                 await ShowAuthenticatedMenu();
             }
             else
             {
+                AnsiConsole.MarkupLine("[yellow]DEBUG: No hay usuario autenticado[/]");
                 await ShowGuestMenu();
             }
         }
@@ -70,10 +73,21 @@ public class MainMenu
             case "Log in":
                 Console.Clear();
                 var user = await _authMenu.Login(); // Login -> devuelve User?
-                if (user != null && user.Role == UserRole.admin)
+                if (user != null)
                 {
                     Console.Clear();
-                    await _varietyUI.Show(); // Abre VarietyUI después de login
+                    if (user.Role == UserRole.admin)
+                    {
+                        // Panel de admin por implementar
+                        AnsiConsole.MarkupLine("[yellow]Panel de admin por implementar[/]");
+                        Console.WriteLine("Presione ENTER para continuar...");
+                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        await _varietyUI.Show(); // Los usuarios normales van a VarietyUI
+                    }
+                    return; // Salir del método para que el bucle principal detecte el usuario autenticado
                 }
                 break;
 
@@ -89,10 +103,11 @@ public class MainMenu
     {
         var user = SessionManager.CurrentUser!;
         AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username} ({user.Role})[/]");
+        AnsiConsole.MarkupLine("[yellow]DEBUG: Ejecutando ShowAuthenticatedMenu[/]");
 
         var choices = user.Role == UserRole.admin
-            ? new[] { "Manage Varieties", "Log out" }
-            : new[] { "Log out" };
+            ? new[] { "Admin Panel (Por implementar)", "Log out" }
+            : new[] { "Manage Varieties", "Log out" };
 
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -105,6 +120,13 @@ public class MainMenu
             case "Manage Varieties":
                 Console.Clear();
                 await _varietyUI.Show();
+                break;
+
+            case "Admin Panel (Por implementar)":
+                Console.Clear();
+                AnsiConsole.MarkupLine("[yellow]Panel de admin por implementar[/]");
+                Console.WriteLine("Presione ENTER para continuar...");
+                Console.ReadLine();
                 break;
 
             case "Log out":
