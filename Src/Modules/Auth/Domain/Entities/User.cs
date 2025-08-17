@@ -17,7 +17,7 @@ namespace ColombianCoffee.Src.Modules.Auth.Domain.Entities
 
 public enum UserRole
 {
-    Admin,
-    Usuario
+    admin,
+    user
 }
 
