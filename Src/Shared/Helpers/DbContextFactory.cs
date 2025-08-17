@@ -20,7 +20,8 @@ namespace ColombianCoffee.Src.Shared.Helpers
                 .AddEnvironmentVariables()
                 .Build();
             string? connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION")
-                                ?? config.GetConnectionString("MySqlDB");
+                                ?? config.GetConnectionString("MySqlDB"); 
+                                
 
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new InvalidOperationException("No se encontró una cadena de conexión válida.");

@@ -1,5 +1,8 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
 using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Modules.Varieties.Domain.Entities;
 
 
 namespace ColombianCoffee.Src.Shared.Contexts
@@ -10,6 +13,7 @@ namespace ColombianCoffee.Src.Shared.Contexts
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Variety> Varieties { get; set; }
         public DbSet<Species> Species { get; set; }
         public DbSet<GeneticGroup> GeneticGroup { get; set; }
@@ -21,7 +25,49 @@ namespace ColombianCoffee.Src.Shared.Contexts
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("users");
+
+                entity.HasKey(u => u.Id);
+
+                entity.Property(u => u.Username)
+                    .HasColumnName("Name")
+                    .IsRequired()
+                    .HasMaxLength(50); // Match SQL VARCHAR(50)
+
+                entity.Property(u => u.Email)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(u => u.PasswordHash)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                modelBuilder.Entity<User>()
+                    .Property(u => u.Role)
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => v.ToLower() == "admin" ? UserRole.admin : UserRole.user);
+    
+                entity.HasIndex(u => u.Email)
+                    .IsUnique();
+
+                entity.HasIndex(u => u.Username)
+                    .IsUnique();
+            });
+
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                var tableName = entity.GetTableName();
+                if (!string.IsNullOrEmpty(tableName))
+                {
+                    entity.SetTableName(tableName.ToLower());
+                }
+            }
+
             base.OnModelCreating(modelBuilder);
         }
     }
+
 }

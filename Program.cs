@@ -6,21 +6,13 @@ namespace ColombianCoffee;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
             var dbContext = DbContextFactory.Create();
-
-            if (dbContext != null)
-            {
-                var mainMenu = new MainMenu(dbContext);
-                mainMenu.Show();
-            }
-            else
-            {
-                Console.WriteLine("Error al crear el contexto de la base de datos");
-            }
+            var mainMenu = new MainMenu(dbContext);
+            await mainMenu.Show();
         }
         catch (Exception ex)
         {
