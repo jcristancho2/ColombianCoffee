@@ -13,21 +13,17 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.Services
     {
         public static User? CurrentUser { get; private set; }
 
-        public static void Login(User user)
-        {
-            CurrentUser = user;
-        }
-        public static void Logout()
-        {
-            CurrentUser = null;
-        }
+        public static void Login(User user) => CurrentUser = user;
+
+        public static void Logout() => CurrentUser = null;
+
         public static void validateRole(UserRole role)
         {
             if (CurrentUser == null)
                 throw new Exception("No hay usuario logueado");
+
             if (CurrentUser.Role != role)
                 throw new Exception("Permiso denegado");
-
         }
     }
 }
