@@ -12,6 +12,7 @@ namespace ColombianCoffee.Src.Shared.Contexts
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Variety> Varieties { get; set; }
         public DbSet<Species> Species { get; set; }
@@ -22,20 +23,18 @@ namespace ColombianCoffee.Src.Shared.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Aplicar configuraciones desde el ensamblado
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-            // Configuración explícita de User
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("Users");
+                entity.ToTable("users");
 
                 entity.HasKey(u => u.Id);
 
                 entity.Property(u => u.Username)
                     .HasColumnName("Name")
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(50); // Match SQL VARCHAR(50)
 
                 entity.Property(u => u.Email)
                     .IsRequired()
@@ -45,9 +44,12 @@ namespace ColombianCoffee.Src.Shared.Contexts
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(u => u.Role)
-                    .IsRequired();
-
+                modelBuilder.Entity<User>()
+                    .Property(u => u.Role)
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => v.ToLower() == "admin" ? UserRole.admin : UserRole.user);
+    
                 entity.HasIndex(u => u.Email)
                     .IsUnique();
 
@@ -67,4 +69,5 @@ namespace ColombianCoffee.Src.Shared.Contexts
             base.OnModelCreating(modelBuilder);
         }
     }
+
 }
