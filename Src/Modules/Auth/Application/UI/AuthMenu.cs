@@ -27,7 +27,7 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.UI
             var roleInput = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Seleccione el [green]Rol[/]:")
-                    .AddChoices("Admin", "Usuario")
+                    .AddChoices("admin", "user")
             );
 
             var role = Enum.Parse<UserRole>(roleInput, true);
@@ -43,10 +43,11 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.UI
                 AnsiConsole.MarkupLine($"[red]❌ {ex.Message}[/]");
             }
 
-            AnsiConsole.Prompt(new TextPrompt<string>("Presione ENTER para continuar..."));
+            Console.WriteLine("Presione ENTER para volver al menú principal...");
+            Console.ReadLine();
         }
 
-        public async Task Login()
+        public async Task<User?> Login()
         {
             var usernameOrEmail = AnsiConsole.Ask<string>("Ingrese [green]Username o Email[/]:");
             var password = AnsiConsole.Prompt(
@@ -60,13 +61,17 @@ namespace ColombianCoffee.Src.Modules.Auth.Application.UI
                 var user = await _authService.LoginAsync(usernameOrEmail, password);
                 SessionManager.Login(user);
                 AnsiConsole.MarkupLine($"[bold green]Bienvenido {user.Username}![/] [yellow]Rol:[/] {user.Role}");
+                Console.WriteLine("Presione ENTER para continuar...");
+                Console.ReadLine();
+                return user; // Devuelve el usuario logueado
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]❌ {ex.Message}[/]");
+                Console.WriteLine("Presione ENTER para volver al menú principal...");
+                Console.ReadLine();
+                return null;
             }
-
-            AnsiConsole.Prompt(new TextPrompt<string>("Presione ENTER para continuar..."));
         }
     }
 }
