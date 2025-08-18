@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 
-namespace ColombianCoffee.src.Shared.Configuration;
+namespace ColombianCoffee.Src.Shared.Configuration;
 
 public class MeasurementUnitConfiguration : IEntityTypeConfiguration<MeasurementUnit>
 {

@@ -1,13 +1,14 @@
-using ColombianCoffee.src.Modules.Varieties.Application.Services;
-using ColombianCoffee.src.Modules.Varieties.Application.UI;
-using ColombianCoffee.src.Modules.Varieties.Infrastructure;
+using ColombianCoffee.Src.Modules.Varieties.Application.Services;
+using ColombianCoffee.Src.Modules.Varieties.Application.UI;
+using ColombianCoffee.Src.Modules.Varieties.Infrastructure;
 using ColombianCoffee.Src.Modules.Auth.Application.Services;
 using ColombianCoffee.Src.Modules.Auth.Application.UI;
 using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
-using ColombianCoffee.Src.Modules.Varieties.Application.UI;
 using ColombianCoffee.Src.Modules.PDFExport.Application.Services;
+using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
 using ColombianCoffee.Src.Shared.Contexts;
 using Spectre.Console;
+using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
 
 namespace ColombianCoffee.Src.Modules.MainMenu;
 
@@ -28,7 +29,9 @@ public class MainMenu
 
         var varietyRepository = new VarietyRepository(_dbContext);
         var varietyService = new VarietyService(varietyRepository);
-        _varietyUI = new VarietyUI(varietyService);
+        var pdfGenerator = new PdfGeneratorService();
+        _varietyUI = new VarietyUI(varietyService, pdfGenerator);
+        _adminVarietyMenu = new AdminVarietyMenu(varietyService);
     }
 
     public async Task Show()
@@ -42,15 +45,14 @@ public class MainMenu
                     .Color(Color.Green)
             );
 
-            // Debug: Mostrar estado de la sesión
             if (SessionManager.CurrentUser != null)
             {
-                AnsiConsole.MarkupLine($"[yellow]DEBUG: Usuario autenticado: {SessionManager.CurrentUser.Username} ({SessionManager.CurrentUser.Role})[/]");
+                AnsiConsole.MarkupLine($"[green]Usuario autenticado:[/] {SessionManager.CurrentUser.Username} ([grey]{SessionManager.CurrentUser.Role}[/])");
                 await ShowAuthenticatedMenu();
             }
             else
             {
-                AnsiConsole.MarkupLine("[yellow]DEBUG: No hay usuario autenticado[/]");
+                AnsiConsole.MarkupLine("[yellow]No hay usuario autenticado.[/]");
                 await ShowGuestMenu();
             }
         }
@@ -73,21 +75,11 @@ public class MainMenu
 
             case "Log in":
                 Console.Clear();
-                var user = await _authMenu.Login(); // Login -> devuelve User?
+                var user = await _authMenu.Login(); // Login -> devuelve User
                 if (user != null)
                 {
                     Console.Clear();
-                    if (user.Role == UserRole.admin)
-                    {
-                        // Panel de admin por implementar
-                        AnsiConsole.MarkupLine("[yellow]Panel de admin por implementar[/]");
-                        Console.WriteLine("Presione ENTER para continuar...");
-                        Console.ReadLine();
-                    }
-                    else
-                    {
-                        await _varietyUI.Show(); // Los usuarios normales van a VarietyUI
-                    }
+                    // Volver al bucle principal para mostrar el menú autenticado según rol
                     return; // Salir del método para que el bucle principal detecte el usuario autenticado
                 }
                 break;
@@ -101,32 +93,37 @@ public class MainMenu
     }
 
     private async Task ShowAuthenticatedMenu()
-        {
-            var user = SessionManager.CurrentUser!;
-            AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username} ({user.Role})[/]");
+    {
+        var user = SessionManager.CurrentUser!;
+        AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username}[/] ([grey]{user.Role}[/])");
 
         var choices = user.Role == UserRole.admin
-            ? new[] { "Admin Panel (Por implementar)", "Log out" }
-            : new[] { "Manage Varieties", "Log out" };
+            ? new[] { "Administrar Variedades", "Explorar Variedades", "Cerrar sesión" }
+            : new[] { "Explorar Variedades", "Cerrar sesión" };
 
-            var selection = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Seleccione una opción")
-                    .AddChoices(choices));
+        var selection = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Seleccione una opción")
+                .AddChoices(choices));
 
         switch (selection)
         {
-            case "Manage Varieties":
+            case "Administrar Variedades":
+                Console.Clear();
+                await _adminVarietyMenu.ShowMenu(user);
+                break;
+
+            case "Explorar Variedades":
                 Console.Clear();
                 await _varietyUI.Show();
                 break;
 
-                case "Log out":
-                    SessionManager.Logout();
-                    AnsiConsole.MarkupLine("[yellow]Sesión cerrada.[/]");
-                    Console.WriteLine("Presione ENTER para continuar...");
-                    Console.ReadLine();
-                    break;
+            case "Cerrar sesión":
+                SessionManager.Logout();
+                AnsiConsole.MarkupLine("[yellow]Sesión cerrada.[/]");
+                Console.WriteLine("Presione ENTER para continuar...");
+                Console.ReadLine();
+                break;
         }
     }
 }

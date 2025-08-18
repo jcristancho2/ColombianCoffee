@@ -1,9 +1,10 @@
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
+using FluentResults;
 
 namespace ColombianCoffee.Src.Modules.Varieties.Application.Interfaces
 {
     public interface IPDFExportService
     {
-        void ExportVariedad(Variety variedad, string filePath);
+        Task<Result<string>> ExportVariedadAsync(Variety variedad, string directoryPath);
     }
 }

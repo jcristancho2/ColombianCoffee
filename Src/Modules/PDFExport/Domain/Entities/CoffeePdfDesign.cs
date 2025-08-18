@@ -1,9 +1,9 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 
-namespace ColombianCoffee.src.Modules.PDFExport.Domain.Designs
+namespace ColombianCoffee.Src.Modules.PDFExport.Domain.Designs
 {
     public class CoffeePdfDesign : IDocument
     {

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Application.Interfaces;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 using ColombianCoffee.Src.Shared.Contexts;
 
-namespace ColombianCoffee.src.Modules.Varieties.Infrastructure;
+namespace ColombianCoffee.Src.Modules.Varieties.Infrastructure;
 
 public class VarietyRepository : IVarietyRepository
 {

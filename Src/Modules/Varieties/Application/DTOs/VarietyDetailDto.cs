@@ -1,4 +1,4 @@
-namespace ColombianCoffee.src.Modules.Varieties.Application.DTOs;
+namespace ColombianCoffee.Src.Modules.Varieties.Application.DTOs;
 
 public sealed class VarietyDetailDto
 {

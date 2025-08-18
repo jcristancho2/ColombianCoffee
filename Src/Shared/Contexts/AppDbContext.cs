@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 
 
 namespace ColombianCoffee.Src.Shared.Contexts

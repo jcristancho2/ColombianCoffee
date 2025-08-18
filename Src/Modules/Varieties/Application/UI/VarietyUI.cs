@@ -1,9 +1,9 @@
-using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
-using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
+using ColombianCoffee.Src.Modules.Varieties.Application.Interfaces;
+using ColombianCoffee.Src.Modules.Varieties.Application.DTOs;
 using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
 using Spectre.Console;
 
-namespace ColombianCoffee.src.Modules.Varieties.Application.UI;
+namespace ColombianCoffee.Src.Modules.Varieties.Application.UI;
 
 public sealed class VarietyUI : IVarietyUI
 {

@@ -1,6 +1,6 @@
-using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
+using ColombianCoffee.Src.Modules.Varieties.Application.DTOs;
 
-namespace ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
+namespace ColombianCoffee.Src.Modules.Varieties.Application.Interfaces;
 
 public interface IVarietyService
 {

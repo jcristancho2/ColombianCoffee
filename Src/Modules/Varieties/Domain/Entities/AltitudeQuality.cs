@@ -1,4 +1,4 @@
-namespace ColombianCoffee.Modules.Varieties.Domain.Entities;
+namespace ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 
 public class AltitudeQuality
 {

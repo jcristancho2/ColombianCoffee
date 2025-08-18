@@ -1,4 +1,4 @@
-namespace ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
+namespace ColombianCoffee.Src.Modules.Varieties.Application.Interfaces;
 
 public interface IVarietyUI
 {

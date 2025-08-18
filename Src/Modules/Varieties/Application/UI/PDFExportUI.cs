@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.Src.Modules.Varieties.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -24,7 +23,7 @@ public class PDFExportUI
         try
         {
             Console.WriteLine("Ingrese el ID de la variedad:");
-            if (!int.TryParse(Console.ReadLine(), out int id))
+            if (!uint.TryParse(Console.ReadLine(), out uint id))
             {
                 Console.WriteLine("ID inválido. Debe ser un número.");
                 return;
@@ -41,7 +40,7 @@ public class PDFExportUI
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string exportDirectory = Path.Combine(documentsPath, "ColombianCoffee", "Exports");
             
-            var result = await _pdfExportService.ExportVariedad(variedad, exportDirectory);
+            var result = await _pdfExportService.ExportVariedadAsync(variedad, exportDirectory);
 
             if (result.IsSuccess)
             {
@@ -54,7 +53,7 @@ public class PDFExportUI
             }
             else
             {
-                Console.WriteLine($"Error: {result.Error}");
+                Console.WriteLine($"Error: {result.Errors.FirstOrDefault()?.Message ?? "Error desconocido"}");
             }
         }
         catch (Exception ex)

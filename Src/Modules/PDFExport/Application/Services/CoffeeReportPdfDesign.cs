@@ -1,4 +1,4 @@
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;

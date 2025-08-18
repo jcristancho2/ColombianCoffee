@@ -1,6 +1,6 @@
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 
-namespace ColombianCoffee.Modules.Varieties.Domain.Entities;
+namespace ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 public class Variety
 {
     public uint Id { get; set; }

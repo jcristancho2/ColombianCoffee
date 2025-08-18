@@ -1,6 +1,6 @@
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 
-namespace ColombianCoffee.src.Modules.Varieties.Application.Interfaces
+namespace ColombianCoffee.Src.Modules.Varieties.Application.Interfaces
 {
     public interface IVarietyRepository
     {

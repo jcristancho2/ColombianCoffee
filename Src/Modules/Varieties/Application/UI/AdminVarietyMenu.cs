@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
-using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
+using ColombianCoffee.Src.Modules.Varieties.Application.DTOs;
+using ColombianCoffee.Src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
 using Spectre.Console;
 
