@@ -1,8 +1,8 @@
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ColombianCoffee.src.Shared.Configuration;
+namespace ColombianCoffee.Src.Shared.Configuration;
 
 public class VarietyConfiguration : IEntityTypeConfiguration<Variety>
 {

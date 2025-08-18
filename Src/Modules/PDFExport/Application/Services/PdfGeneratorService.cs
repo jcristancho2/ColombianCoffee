@@ -1,5 +1,5 @@
 using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
-using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
+using ColombianCoffee.Src.Modules.Varieties.Application.DTOs;
 
 // IMPORTANTE: Estos 'using' statements son cruciales para que la API fluida funcione correctamente.
 // Proporcionan los métodos de extensión necesarios (como 'Page', 'Header', 'Content', etc.).
