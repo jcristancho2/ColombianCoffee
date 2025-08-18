@@ -5,8 +5,6 @@ using ColombianCoffee.Src.Modules.Auth.Application.Services;
 using ColombianCoffee.Src.Modules.Auth.Application.UI;
 using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
 using ColombianCoffee.Src.Shared.Contexts;
-using ColombianCoffee.Src.Shared.Helpers;
-using ColombianCoffee.Src.Shared.Utils;
 using Spectre.Console;
 
 namespace ColombianCoffee.Src.Modules.MainMenu;
