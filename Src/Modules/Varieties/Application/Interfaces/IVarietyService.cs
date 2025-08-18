@@ -6,4 +6,6 @@ public interface IVarietyService
 {
     Task<IEnumerable<VarietyIdNameDto>> GetFilteredVarietiesAsync(VarietyFilterDto filter, CancellationToken ct = default);
     Task<VarietyDetailDto?> GetVarietyDetailAsync(uint id, CancellationToken ct = default);
+
+
 }

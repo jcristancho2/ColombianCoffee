@@ -4,9 +4,8 @@ using ColombianCoffee.src.Modules.Varieties.Infrastructure;
 using ColombianCoffee.Src.Modules.Auth.Application.Services;
 using ColombianCoffee.Src.Modules.Auth.Application.UI;
 using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
+using ColombianCoffee.Src.Modules.PDFExport.Application.Services;
 using ColombianCoffee.Src.Shared.Contexts;
-using ColombianCoffee.Src.Shared.Helpers;
-using ColombianCoffee.Src.Shared.Utils;
 using Spectre.Console;
 
 namespace ColombianCoffee.Src.Modules.MainMenu;
@@ -27,7 +26,8 @@ public class MainMenu
 
         var varietyRepository = new VarietyRepository(_dbContext);
         var varietyService = new VarietyService(varietyRepository);
-        _varietyUI = new VarietyUI(varietyService);
+        var pdfGeneratorService = new PdfGeneratorService();
+        _varietyUI = new VarietyUI(varietyService, pdfGeneratorService);
     }
 
     public async Task Show()
@@ -107,7 +107,7 @@ public class MainMenu
 
         var choices = user.Role == UserRole.admin
             ? new[] { "Admin Panel (Por implementar)", "Log out" }
-            : new[] { "Manage Varieties", "Log out" };
+            : new[] { "Search Varieties", "Log out" };
 
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -117,7 +117,7 @@ public class MainMenu
 
         switch (selection)
         {
-            case "Manage Varieties":
+            case "Search Varieties":
                 Console.Clear();
                 await _varietyUI.Show();
                 break;
