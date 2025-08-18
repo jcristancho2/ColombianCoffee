@@ -9,4 +9,10 @@ public interface IVarietyService
     Task<VarietyDetailDto> CreateVarietyAsync(VarietyDetailDto varietyDto);
     Task<VarietyDetailDto> UpdateVarietyAsync(uint id, VarietyDetailDto varietyDto);
     Task<bool> DeleteVarietyAsync(uint id);
+    
+    // Métodos para obtener opciones de catálogos
+    Task<IEnumerable<string>> GetSpeciesOptionsAsync();
+    Task<IEnumerable<string>> GetGeneticGroupOptionsAsync();
+    Task<IEnumerable<string>> GetLineageOptionsAsync();
+    Task<IEnumerable<string>> GetAltitudeQualityOptionsAsync();
 }

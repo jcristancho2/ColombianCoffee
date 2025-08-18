@@ -1,4 +1,4 @@
-namespace ColombianCoffee.Modules.Varieties.Domain.Entities;
+namespace ColombianCoffee.src.Modules.Varieties.Domain.Entities;
 
 public class MeasurementUnit
 {

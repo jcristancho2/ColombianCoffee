@@ -2,19 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
 using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
-using ColombianCoffee.src.Modules.Varieties.Infrastructure;
-using ColombianCoffee.Src.Shared.Contexts;
 
 namespace ColombianCoffee.src.Modules.Varieties.Application.Services
 {
     public sealed class VarietyService : IVarietyService
     {
         private readonly IVarietyRepository _varietyRepository;
-        private readonly AppDbContext _dbContext;
-        public VarietyService(IVarietyRepository varietyRepository, AppDbContext dbContext)
+
+        public VarietyService(IVarietyRepository varietyRepository)
         {
             _varietyRepository = varietyRepository;
-            _dbContext = dbContext;
         }
 
         public async Task<IEnumerable<VarietyIdNameDto>> GetFilteredVarietiesAsync(
@@ -88,9 +85,9 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
                 Name = variety.Name,
                 ScientificName = variety.ScientificName,
                 History = variety.History,
-                SpeciesName = variety.Species.CommonName,
-                GeneticGroupName = variety.GeneticGroup.Name,
-                LineageName = variety.Lineage.Name,
+                SpeciesName = variety.Species?.CommonName ?? string.Empty,
+                GeneticGroupName = variety.GeneticGroup?.Name ?? string.Empty,
+                LineageName = variety.Lineage?.Name ?? string.Empty,
                 PlantHeight = variety.PlantHeight,
                 BeanSize = variety.BeanSize,
                 YieldPotential = variety.YieldPotential,
@@ -102,13 +99,14 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
                 NematodesResistance = variety.NematodesResistance,
                 MinAltitude = variety.MinAltitude,
                 MaxAltitude = variety.MaxAltitude,
-                AltitudeQualityLabel = variety.AltitudeQuality.Label,
+                AltitudeQualityLabel = variety.AltitudeQuality?.Label ?? string.Empty,
                 PlantingDensityValue = variety.PlantingDensityValue,
                 PlantingDensityUnit = variety.PlantingDensityUnit?.Name,
                 AltitudeUnit = variety.AltitudeUnit?.Name,
                 ImageUrl = variety.ImageUrl
             };
         }
+
         public async Task<VarietyDetailDto> CreateVarietyAsync(VarietyDetailDto varietyDto)
         {
             // Validaciones básicas
@@ -118,24 +116,15 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
             if (varietyDto.MinAltitude >= varietyDto.MaxAltitude)
                 throw new ArgumentException("La altitud mínima debe ser menor que la máxima");
 
-            // Buscar entidades relacionadas
-            var species = await _dbContext.Species.FirstOrDefaultAsync(s => s.CommonName == varietyDto.SpeciesName);
-            var geneticGroup = await _dbContext.GeneticGroup.FirstOrDefaultAsync(g => g.Name == varietyDto.GeneticGroupName);
-            var lineage = await _dbContext.Lineage.FirstOrDefaultAsync(l => l.Name == varietyDto.LineageName);
-            var altitudeQuality = await _dbContext.AltitudeQuality.FirstOrDefaultAsync(a => a.Label == varietyDto.AltitudeQualityLabel);
-
-            if (species == null || geneticGroup == null || lineage == null || altitudeQuality == null)
-                throw new ArgumentException("Datos de referencia no válidos");
-
             // Crear nueva entidad
             var variety = new Variety
             {
                 Name = varietyDto.Name,
                 ScientificName = varietyDto.ScientificName,
-                History = varietyDto.History,
-                SpeciesId = species.Id,
-                GeneticGroupId = geneticGroup.Id,
-                LineageId = lineage.Id,
+                History = string.IsNullOrWhiteSpace(varietyDto.History) ? null : varietyDto.History,
+                SpeciesId = await GetSpeciesIdByName(varietyDto.SpeciesName),
+                GeneticGroupId = await GetGeneticGroupIdByName(varietyDto.GeneticGroupName),
+                LineageId = await GetLineageIdByName(varietyDto.LineageName),
                 PlantHeight = varietyDto.PlantHeight,
                 BeanSize = varietyDto.BeanSize,
                 YieldPotential = varietyDto.YieldPotential,
@@ -144,37 +133,28 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
                 NematodesResistance = varietyDto.NematodesResistance,
                 MinAltitude = varietyDto.MinAltitude,
                 MaxAltitude = varietyDto.MaxAltitude,
-                AltitudeQualityId = altitudeQuality.Id,
-                HarvestTime = varietyDto.HarvestTime,
-                MaturationTime = varietyDto.MaturationTime,
-                NutritionalRequirement = varietyDto.NutritionalRequirement,
+                AltitudeQualityId = await GetAltitudeQualityIdByLabel(varietyDto.AltitudeQualityLabel),
+                HarvestTime = string.IsNullOrWhiteSpace(varietyDto.HarvestTime) ? null : varietyDto.HarvestTime,
+                MaturationTime = string.IsNullOrWhiteSpace(varietyDto.MaturationTime) ? null : varietyDto.MaturationTime,
+                NutritionalRequirement = string.IsNullOrWhiteSpace(varietyDto.NutritionalRequirement) ? null : varietyDto.NutritionalRequirement,
                 PlantingDensityValue = varietyDto.PlantingDensityValue,
-                ImageUrl = varietyDto.ImageUrl
+                ImageUrl = string.IsNullOrWhiteSpace(varietyDto.ImageUrl) ? null : varietyDto.ImageUrl
             };
 
             // Manejar unidades de medida si existen
             if (!string.IsNullOrWhiteSpace(varietyDto.PlantingDensityUnit))
             {
-                var plantingDensityUnit = await _dbContext.MeasurementUnit
-                    .FirstOrDefaultAsync(m => m.Name == varietyDto.PlantingDensityUnit);
-                
-                if (plantingDensityUnit != null)
-                    variety.PlantingDensityUnitId = plantingDensityUnit.Id;
+                variety.PlantingDensityUnitId = await GetMeasurementUnitIdByName(varietyDto.PlantingDensityUnit);
             }
 
             if (!string.IsNullOrWhiteSpace(varietyDto.AltitudeUnit))
             {
-                var altitudeUnit = await _dbContext.MeasurementUnit
-                    .FirstOrDefaultAsync(m => m.Name == varietyDto.AltitudeUnit);
-                
-                if (altitudeUnit != null)
-                    variety.AltitudeUnitId = altitudeUnit.Id;
+                variety.AltitudeUnitId = await GetMeasurementUnitIdByName(varietyDto.AltitudeUnit);
             }
 
-                _dbContext.Varieties.Add(variety);
-                await _dbContext.SaveChangesAsync();
-
-            return await GetVarietyDetailAsync(variety.Id);
+            // Guardar usando el repositorio
+            var savedVariety = await _varietyRepository.CreateAsync(variety);
+            return await GetVarietyDetailAsync(savedVariety.Id);
         }
 
         public async Task<VarietyDetailDto> UpdateVarietyAsync(uint id, VarietyDetailDto varietyDto)
@@ -190,22 +170,13 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
             if (varietyDto.MinAltitude >= varietyDto.MaxAltitude)
                 throw new ArgumentException("La altitud mínima debe ser menor que la máxima");
 
-            // Buscar entidades relacionadas
-            var species = await _dbContext.Species.FirstOrDefaultAsync(s => s.CommonName == varietyDto.SpeciesName);
-            var geneticGroup = await _dbContext.GeneticGroup.FirstOrDefaultAsync(g => g.Name == varietyDto.GeneticGroupName);
-            var lineage = await _dbContext.Lineage.FirstOrDefaultAsync(l => l.Name == varietyDto.LineageName);
-            var altitudeQuality = await _dbContext.AltitudeQuality.FirstOrDefaultAsync(a => a.Label == varietyDto.AltitudeQualityLabel);
-
-            if (species == null || geneticGroup == null || lineage == null || altitudeQuality == null)
-                throw new ArgumentException("Datos de referencia no válidos");
-
             // Actualizar propiedades
             existingVariety.Name = varietyDto.Name;
             existingVariety.ScientificName = varietyDto.ScientificName;
-            existingVariety.History = varietyDto.History;
-            existingVariety.SpeciesId = species.Id;
-            existingVariety.GeneticGroupId = geneticGroup.Id;
-            existingVariety.LineageId = lineage.Id;
+            existingVariety.History = string.IsNullOrWhiteSpace(varietyDto.History) ? null : varietyDto.History;
+            existingVariety.SpeciesId = await GetSpeciesIdByName(varietyDto.SpeciesName);
+            existingVariety.GeneticGroupId = await GetGeneticGroupIdByName(varietyDto.GeneticGroupName);
+            existingVariety.LineageId = await GetLineageIdByName(varietyDto.LineageName);
             existingVariety.PlantHeight = varietyDto.PlantHeight;
             existingVariety.BeanSize = varietyDto.BeanSize;
             existingVariety.YieldPotential = varietyDto.YieldPotential;
@@ -214,20 +185,17 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
             existingVariety.NematodesResistance = varietyDto.NematodesResistance;
             existingVariety.MinAltitude = varietyDto.MinAltitude;
             existingVariety.MaxAltitude = varietyDto.MaxAltitude;
-            existingVariety.AltitudeQualityId = altitudeQuality.Id;
-            existingVariety.HarvestTime = varietyDto.HarvestTime;
-            existingVariety.MaturationTime = varietyDto.MaturationTime;
-            existingVariety.NutritionalRequirement = varietyDto.NutritionalRequirement;
+            existingVariety.AltitudeQualityId = await GetAltitudeQualityIdByLabel(varietyDto.AltitudeQualityLabel);
+            existingVariety.HarvestTime = string.IsNullOrWhiteSpace(varietyDto.HarvestTime) ? null : varietyDto.HarvestTime;
+            existingVariety.MaturationTime = string.IsNullOrWhiteSpace(varietyDto.MaturationTime) ? null : varietyDto.MaturationTime;
+            existingVariety.NutritionalRequirement = string.IsNullOrWhiteSpace(varietyDto.NutritionalRequirement) ? null : varietyDto.NutritionalRequirement;
             existingVariety.PlantingDensityValue = varietyDto.PlantingDensityValue;
-            existingVariety.ImageUrl = varietyDto.ImageUrl;
+            existingVariety.ImageUrl = string.IsNullOrWhiteSpace(varietyDto.ImageUrl) ? null : varietyDto.ImageUrl;
 
             // Manejar unidades de medida
             if (!string.IsNullOrWhiteSpace(varietyDto.PlantingDensityUnit))
             {
-                var plantingDensityUnit = await _dbContext.MeasurementUnit
-                    .FirstOrDefaultAsync(m => m.Name == varietyDto.PlantingDensityUnit);
-                
-                existingVariety.PlantingDensityUnitId = plantingDensityUnit?.Id;
+                existingVariety.PlantingDensityUnitId = await GetMeasurementUnitIdByName(varietyDto.PlantingDensityUnit);
             }
             else
             {
@@ -236,18 +204,15 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
 
             if (!string.IsNullOrWhiteSpace(varietyDto.AltitudeUnit))
             {
-                var altitudeUnit = await _dbContext.MeasurementUnit
-                    .FirstOrDefaultAsync(m => m.Name == varietyDto.AltitudeUnit);
-                
-                existingVariety.AltitudeUnitId = altitudeUnit?.Id;
+                existingVariety.AltitudeUnitId = await GetMeasurementUnitIdByName(varietyDto.AltitudeUnit);
             }
             else
             {
                 existingVariety.AltitudeUnitId = null;
             }
 
-                await _dbContext.SaveChangesAsync();
-
+            // Actualizar usando el repositorio
+            await _varietyRepository.UpdateAsync(existingVariety);
             return await GetVarietyDetailAsync(existingVariety.Id);
         }
 
@@ -257,9 +222,71 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.Services
             if (variety == null)
                 return false;
 
-            _dbContext.Varieties.Remove(variety);
-            await _dbContext.SaveChangesAsync();
-            return true;
+            return await _varietyRepository.DeleteAsync(id);
+        }
+
+        // Métodos auxiliares para obtener IDs de entidades relacionadas
+        private async Task<uint> GetSpeciesIdByName(string speciesName)
+        {
+            var species = await _varietyRepository.GetSpeciesByNameAsync(speciesName);
+            if (species == null)
+                throw new ArgumentException($"Especie '{speciesName}' no encontrada");
+            return species.Id;
+        }
+
+        private async Task<int> GetGeneticGroupIdByName(string geneticGroupName)
+        {
+            var geneticGroup = await _varietyRepository.GetGeneticGroupByNameAsync(geneticGroupName);
+            if (geneticGroup == null)
+                throw new ArgumentException($"Grupo genético '{geneticGroupName}' no encontrado");
+            return geneticGroup.Id;
+        }
+
+        private async Task<int> GetLineageIdByName(string lineageName)
+        {
+            var lineage = await _varietyRepository.GetLineageByNameAsync(lineageName);
+            if (lineage == null)
+                throw new ArgumentException($"Linaje '{lineageName}' no encontrado");
+            return lineage.Id;
+        }
+
+        private async Task<uint> GetAltitudeQualityIdByLabel(string label)
+        {
+            var altitudeQuality = await _varietyRepository.GetAltitudeQualityByLabelAsync(label);
+            if (altitudeQuality == null)
+                throw new ArgumentException($"Calidad de altitud '{label}' no encontrada");
+            return altitudeQuality.Id;
+        }
+
+        private async Task<uint?> GetMeasurementUnitIdByName(string unitName)
+        {
+            var unit = await _varietyRepository.GetMeasurementUnitByNameAsync(unitName);
+            return unit?.Id;
+        }
+
+        // Métodos para obtener opciones de catálogos
+        public async Task<IEnumerable<string>> GetSpeciesOptionsAsync()
+        {
+            var species = await _varietyRepository.GetAllSpeciesAsync();
+            return species.Select(s => s.CommonName);
+        }
+
+        public async Task<IEnumerable<string>> GetGeneticGroupOptionsAsync()
+        {
+            var geneticGroups = await _varietyRepository.GetAllGeneticGroupsAsync();
+            return geneticGroups.Select(g => g.Name);
+        }
+
+        public async Task<IEnumerable<string>> GetLineageOptionsAsync()
+        {
+            var lineages = await _varietyRepository.GetAllLineagesAsync();
+            return lineages.Select(l => l.Name);
+        }
+
+        public async Task<IEnumerable<string>> GetAltitudeQualityOptionsAsync()
+        {
+            var altitudeQualities = await _varietyRepository.GetAllAltitudeQualitiesAsync();
+            return altitudeQualities.Select(a => a.Label);
         }
     }
 }

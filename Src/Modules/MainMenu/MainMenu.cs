@@ -28,7 +28,7 @@ public class MainMenu
         _authMenu = new AuthMenu(authService);
 
         var varietyRepository = new VarietyRepository(_dbContext);
-        var varietyService = new VarietyService(varietyRepository, _dbContext); // Pasar dbContext aquí
+        var varietyService = new VarietyService(varietyRepository);
         _varietyUI = new VarietyUI(varietyService);
         _adminVarietyMenu = new AdminVarietyMenu(varietyService);
     }
