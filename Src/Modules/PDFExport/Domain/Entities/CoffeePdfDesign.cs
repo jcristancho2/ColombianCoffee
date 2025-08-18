@@ -1,7 +1,7 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Modules.Varieties.Domain.Entities;
 
 namespace ColombianCoffee.src.Modules.PDFExport.Domain.Designs
 {

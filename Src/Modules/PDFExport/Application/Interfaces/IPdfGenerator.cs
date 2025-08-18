@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Modules.Varieties.Domain.Entities;
 
 namespace ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces
 {
