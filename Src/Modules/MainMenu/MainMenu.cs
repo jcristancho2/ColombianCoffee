@@ -5,9 +5,8 @@ using ColombianCoffee.Src.Modules.Auth.Application.Services;
 using ColombianCoffee.Src.Modules.Auth.Application.UI;
 using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
 using ColombianCoffee.Src.Modules.Varieties.Application.UI;
+using ColombianCoffee.Src.Modules.PDFExport.Application.Services;
 using ColombianCoffee.Src.Shared.Contexts;
-using ColombianCoffee.Src.Shared.Helpers;
-using ColombianCoffee.Src.Shared.Utils;
 using Spectre.Console;
 
 namespace ColombianCoffee.Src.Modules.MainMenu;
@@ -30,7 +29,6 @@ public class MainMenu
         var varietyRepository = new VarietyRepository(_dbContext);
         var varietyService = new VarietyService(varietyRepository);
         _varietyUI = new VarietyUI(varietyService);
-        _adminVarietyMenu = new AdminVarietyMenu(varietyService);
     }
 
     public async Task Show()
@@ -107,26 +105,21 @@ public class MainMenu
             var user = SessionManager.CurrentUser!;
             AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username} ({user.Role})[/]");
 
-            var choices = user.Role == UserRole.admin
-                ? new[] { "Administrar Variedades", "Explorar Variedades", "Log out" }
-                : new[] { "Explorar Variedades", "Log out" };
+        var choices = user.Role == UserRole.admin
+            ? new[] { "Admin Panel (Por implementar)", "Log out" }
+            : new[] { "Manage Varieties", "Log out" };
 
             var selection = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Seleccione una opción")
                     .AddChoices(choices));
 
-            switch (selection)
-            {
-                case "Administrar Variedades":
-                    Console.Clear();
-                    await _adminVarietyMenu.ShowMenu(user);
-                    break;
-
-                case "Explorar Variedades":
-                    Console.Clear();
-                    await _varietyUI.Show();
-                    break;
+        switch (selection)
+        {
+            case "Manage Varieties":
+                Console.Clear();
+                await _varietyUI.Show();
+                break;
 
                 case "Log out":
                     SessionManager.Logout();
