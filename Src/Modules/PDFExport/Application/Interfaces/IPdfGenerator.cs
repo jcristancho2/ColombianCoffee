@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using ColombianCoffee.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
 
 namespace ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces
 {
     public interface IPdfGenerator
     {
-        Task GenerateCoffeeVarietyPdf(Variety variety, string outputPath);
-        Task GenerateCoffeeVarietiesReportPdf(IEnumerable<Variety> varieties, string outputPath);
+        Task GenerateCoffeeVarietyDetailPdf(VarietyDetailDto varietyDetail, string outputPath);
     }
 }

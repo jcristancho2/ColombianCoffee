@@ -1,5 +1,6 @@
 using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
+using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
 using Spectre.Console;
 
 namespace ColombianCoffee.src.Modules.Varieties.Application.UI;
@@ -7,11 +8,13 @@ namespace ColombianCoffee.src.Modules.Varieties.Application.UI;
 public sealed class VarietyUI : IVarietyUI
 {
     private readonly IVarietyService _varietyService;
+    private readonly IPdfGenerator _pdfGenerator;
     private readonly Dictionary<string, Action<VarietyFilterDto>> _filterActions;
 
-    public VarietyUI(IVarietyService varietyService)
+    public VarietyUI(IVarietyService varietyService, IPdfGenerator pdfGenerator)
     {
         _varietyService = varietyService;
+        _pdfGenerator = pdfGenerator;
 
         _filterActions = new Dictionary<string, Action<VarietyFilterDto>>
         {
@@ -121,8 +124,38 @@ public sealed class VarietyUI : IVarietyUI
             if (verPdf)
             {
                 AnsiConsole.WriteLine($"Generando PDF para la variedad {detail.Name}...");
-                //TODO: Generar PDF
-                AnsiConsole.WriteLine("PDF generado correctamente.");
+                
+                try
+                {
+                    // En devcontainer, usar directorio relativo al workspace
+                    string exportDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
+                    
+                    if (!Directory.Exists(exportDirectory))
+                        Directory.CreateDirectory(exportDirectory);
+                    
+                    string fileName = $"Variedad_{detail.Id}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                    string fullPath = Path.Combine(exportDirectory, fileName);
+                    
+                    // Generar PDF usando el servicio
+                    await _pdfGenerator.GenerateCoffeeVarietyDetailPdf(detail, fullPath);
+                    
+                    AnsiConsole.WriteLine($"PDF generado correctamente en: {fullPath}");
+                    AnsiConsole.WriteLine("¿Desea abrir el archivo? (S/N)");
+                    var abrir = AnsiConsole.Ask<string>("").ToUpper();
+                    
+                    if (abrir == "S")
+                    {
+                        // En devcontainer, mostrar la ruta y sugerir abrir manualmente
+                        AnsiConsole.WriteLine($"Archivo PDF generado en: {fullPath}");
+                        AnsiConsole.WriteLine("En devcontainer, abra el archivo manualmente desde su explorador de archivos.");
+                        AnsiConsole.WriteLine("O copie la ruta y ábrala desde su sistema host.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AnsiConsole.WriteLine($"Error generando PDF: {ex.Message}");
+                }
+                
                 AnsiConsole.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey();
             }

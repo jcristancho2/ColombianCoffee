@@ -4,6 +4,7 @@ using ColombianCoffee.src.Modules.Varieties.Infrastructure;
 using ColombianCoffee.Src.Modules.Auth.Application.Services;
 using ColombianCoffee.Src.Modules.Auth.Application.UI;
 using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
+using ColombianCoffee.Src.Modules.PDFExport.Application.Services;
 using ColombianCoffee.Src.Shared.Contexts;
 using Spectre.Console;
 
@@ -25,7 +26,8 @@ public class MainMenu
 
         var varietyRepository = new VarietyRepository(_dbContext);
         var varietyService = new VarietyService(varietyRepository);
-        _varietyUI = new VarietyUI(varietyService);
+        var pdfGeneratorService = new PdfGeneratorService();
+        _varietyUI = new VarietyUI(varietyService, pdfGeneratorService);
     }
 
     public async Task Show()
