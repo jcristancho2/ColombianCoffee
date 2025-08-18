@@ -107,7 +107,7 @@ public class MainMenu
 
         var choices = user.Role == UserRole.admin
             ? new[] { "Admin Panel (Por implementar)", "Log out" }
-            : new[] { "Manage Varieties", "Log out" };
+            : new[] { "Search Varieties", "Log out" };
 
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -117,7 +117,7 @@ public class MainMenu
 
         switch (selection)
         {
-            case "Manage Varieties":
+            case "Search Varieties":
                 Console.Clear();
                 await _varietyUI.Show();
                 break;
