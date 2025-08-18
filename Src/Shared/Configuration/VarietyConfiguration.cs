@@ -1,4 +1,4 @@
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
+using ColombianCoffee.Modules.Varieties.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

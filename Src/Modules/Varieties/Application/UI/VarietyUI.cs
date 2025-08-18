@@ -1,6 +1,5 @@
 using ColombianCoffee.src.Modules.Varieties.Application.Interfaces;
 using ColombianCoffee.src.Modules.Varieties.Application.DTOs;
-using ColombianCoffee.src.Modules.Varieties.Domain.Entities;
 using Spectre.Console;
 
 namespace ColombianCoffee.src.Modules.Varieties.Application.UI;
