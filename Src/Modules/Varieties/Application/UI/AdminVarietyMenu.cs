@@ -15,6 +15,7 @@ namespace ColombianCoffee.Src.Modules.Varieties.Application.UI
         public AdminVarietyMenu(IVarietyService varietyService)
         {
             _varietyService = varietyService;
+
         }
 
         public async Task ShowMenu(User user)
@@ -156,6 +157,7 @@ namespace ColombianCoffee.Src.Modules.Varieties.Application.UI
             // For now we'll just show what would be saved
             AnsiConsole.MarkupLine("[bold green]✅ Nueva variedad creada:[/]");
             DisplayVarietyDetails(newVariety);
+            await _varietyService.CreateVarietyAsync(newVariety);
             AnsiConsole.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
         }

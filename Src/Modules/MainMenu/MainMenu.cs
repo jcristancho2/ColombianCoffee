@@ -4,6 +4,7 @@ using ColombianCoffee.src.Modules.Varieties.Infrastructure;
 using ColombianCoffee.Src.Modules.Auth.Application.Services;
 using ColombianCoffee.Src.Modules.Auth.Application.UI;
 using ColombianCoffee.Src.Modules.Auth.Infraestructure.Repositories;
+using ColombianCoffee.Src.Modules.Varieties.Application.UI;
 using ColombianCoffee.Src.Shared.Contexts;
 using ColombianCoffee.Src.Shared.Helpers;
 using ColombianCoffee.Src.Shared.Utils;
@@ -16,6 +17,7 @@ public class MainMenu
     private readonly AppDbContext _dbContext;
     private readonly AuthMenu _authMenu;
     private readonly VarietyUI _varietyUI;
+    private readonly AdminVarietyMenu _adminVarietyMenu;
 
     public MainMenu(AppDbContext dbContext)
     {
@@ -26,8 +28,9 @@ public class MainMenu
         _authMenu = new AuthMenu(authService);
 
         var varietyRepository = new VarietyRepository(_dbContext);
-        var varietyService = new VarietyService(varietyRepository);
+        var varietyService = new VarietyService(varietyRepository, _dbContext); // Pasar dbContext aquí
         _varietyUI = new VarietyUI(varietyService);
+        _adminVarietyMenu = new AdminVarietyMenu(varietyService);
     }
 
     public async Task Show()
@@ -100,41 +103,37 @@ public class MainMenu
     }
 
     private async Task ShowAuthenticatedMenu()
-    {
-        var user = SessionManager.CurrentUser!;
-        AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username} ({user.Role})[/]");
-        AnsiConsole.MarkupLine("[yellow]DEBUG: Ejecutando ShowAuthenticatedMenu[/]");
-
-        var choices = user.Role == UserRole.admin
-            ? new[] { "Admin Panel (Por implementar)", "Log out" }
-            : new[] { "Manage Varieties", "Log out" };
-
-        var selection = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("Select an option")
-                .AddChoices(choices)
-        );
-
-        switch (selection)
         {
-            case "Manage Varieties":
-                Console.Clear();
-                await _varietyUI.Show();
-                break;
+            var user = SessionManager.CurrentUser!;
+            AnsiConsole.MarkupLine($"[bold green]Bienvenido, {user.Username} ({user.Role})[/]");
 
-            case "Admin Panel (Por implementar)":
-                Console.Clear();
-                AnsiConsole.MarkupLine("[yellow]Panel de admin por implementar[/]");
-                Console.WriteLine("Presione ENTER para continuar...");
-                Console.ReadLine();
-                break;
+            var choices = user.Role == UserRole.admin
+                ? new[] { "Administrar Variedades", "Explorar Variedades", "Log out" }
+                : new[] { "Explorar Variedades", "Log out" };
 
-            case "Log out":
-                SessionManager.Logout();
-                AnsiConsole.MarkupLine("[yellow]Sesión cerrada.[/]");
-                Console.WriteLine("Presione ENTER para continuar...");
-                Console.ReadLine();
-                break;
+            var selection = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Seleccione una opción")
+                    .AddChoices(choices));
+
+            switch (selection)
+            {
+                case "Administrar Variedades":
+                    Console.Clear();
+                    await _adminVarietyMenu.ShowMenu(user);
+                    break;
+
+                case "Explorar Variedades":
+                    Console.Clear();
+                    await _varietyUI.Show();
+                    break;
+
+                case "Log out":
+                    SessionManager.Logout();
+                    AnsiConsole.MarkupLine("[yellow]Sesión cerrada.[/]");
+                    Console.WriteLine("Presione ENTER para continuar...");
+                    Console.ReadLine();
+                    break;
         }
     }
 }
