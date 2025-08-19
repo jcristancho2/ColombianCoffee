@@ -1,7 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+<<<<<<< HEAD
 using System.Threading.Tasks;
+=======
+using Microsoft.EntityFrameworkCore;
+using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
+using ColombianCoffee.Src.Modules.Varieties.Domain.Entities;
+>>>>>>> release/v1.0.0
 
 using Microsoft.EntityFrameworkCore;
 
