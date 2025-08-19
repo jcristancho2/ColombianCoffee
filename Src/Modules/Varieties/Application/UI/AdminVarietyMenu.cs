@@ -191,7 +191,6 @@ namespace ColombianCoffee.Src.Modules.Varieties.Application.UI
                     NutritionalRequirement = nutritionalSel == "Sin especificar" ? null : nutritionalSel,
                     PlantingDensityValue = AnsiConsole.Ask<decimal?>("Densidad de siembra - valor (opcional):", null),
                     PlantingDensityUnit = AnsiConsole.Ask<string>("Densidad de siembra - unidad (opcional):", ""),
-                    AltitudeUnit = AnsiConsole.Ask<string>("Unidad de altitud (opcional):", ""),
                     ImageUrl = AnsiConsole.Ask<string>("URL de imagen (opcional):", "")
                 };
 
@@ -333,7 +332,6 @@ namespace ColombianCoffee.Src.Modules.Varieties.Application.UI
                     NutritionalRequirement = nutritionalSel == "Sin especificar" ? null : nutritionalSel,
                     PlantingDensityValue = AnsiConsole.Ask<decimal?>("Densidad de siembra - valor:", varietyDetail.PlantingDensityValue),
                     PlantingDensityUnit = AnsiConsole.Ask<string>("Densidad de siembra - unidad:", varietyDetail.PlantingDensityUnit ?? ""),
-                    AltitudeUnit = AnsiConsole.Ask<string>("Unidad de altitud:", varietyDetail.AltitudeUnit ?? ""),
                     ImageUrl = AnsiConsole.Ask<string>("URL de imagen:", varietyDetail.ImageUrl ?? "")
                 };
 
