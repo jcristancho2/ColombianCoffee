@@ -8,7 +8,7 @@ using ColombianCoffee.Src.Modules.PDFExport.Application.Services;
 using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
 using ColombianCoffee.Src.Shared.Contexts;
 using Spectre.Console;
-using ColombianCoffee.Src.Modules.Auth.Domain.Entities;
+using ColombianCoffee.Src.Modules.Auth.Domain.Entities; 
 
 namespace ColombianCoffee.Src.Modules.MainMenu;
 
