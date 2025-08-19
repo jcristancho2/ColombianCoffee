@@ -141,11 +141,8 @@ namespace ColombianCoffee.Src.Modules.Varieties.Application.Services
                 ImageUrl = string.IsNullOrWhiteSpace(varietyDto.ImageUrl) ? null : varietyDto.ImageUrl
             };
 
-            // Manejar unidades de medida si existen
-            if (!string.IsNullOrWhiteSpace(varietyDto.PlantingDensityUnit))
-            {
-                variety.PlantingDensityUnitId = await GetMeasurementUnitIdByName(varietyDto.PlantingDensityUnit);
-            }
+            // Establecer unidad por defecto para densidad de siembra
+            variety.PlantingDensityUnitId = await GetMeasurementUnitIdByName("plantas/ha");
 
             if (!string.IsNullOrWhiteSpace(varietyDto.AltitudeUnit))
             {
@@ -192,15 +189,8 @@ namespace ColombianCoffee.Src.Modules.Varieties.Application.Services
                 ImageUrl = string.IsNullOrWhiteSpace(varietyDto.ImageUrl) ? null : varietyDto.ImageUrl
             };
 
-            // Manejar unidades de medida
-            if (!string.IsNullOrWhiteSpace(varietyDto.PlantingDensityUnit))
-            {
-                varietyToUpdate.PlantingDensityUnitId = await GetMeasurementUnitIdByName(varietyDto.PlantingDensityUnit);
-            }
-            else
-            {
-                varietyToUpdate.PlantingDensityUnitId = null;
-            }
+            // Establecer unidad por defecto para densidad de siembra
+            varietyToUpdate.PlantingDensityUnitId = await GetMeasurementUnitIdByName("plantas/ha");
 
             if (!string.IsNullOrWhiteSpace(varietyDto.AltitudeUnit))
             {

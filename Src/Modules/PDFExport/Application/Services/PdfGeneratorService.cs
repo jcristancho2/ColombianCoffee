@@ -1,8 +1,6 @@
 using ColombianCoffee.Src.Modules.PDFExport.Application.Interfaces;
 using ColombianCoffee.Src.Modules.Varieties.Application.DTOs;
 
-// IMPORTANTE: Estos 'using' statements son cruciales para que la API fluida funcione correctamente.
-// Proporcionan los métodos de extensión necesarios (como 'Page', 'Header', 'Content', etc.).
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -20,48 +18,30 @@ namespace ColombianCoffee.Src.Modules.PDFExport.Application.Services
         {
             await Task.Run(() => 
             {
-                // Inicia la creación del documento PDF utilizando la API fluida de QuestPDF.
-                // 'container' es el punto de entrada para definir el layout del documento.
                 Document.Create(container =>
                 {
-                    // Define una página dentro del documento.
-                    // 'page' es el punto de entrada para definir el contenido de una página individual.
                     container.Page(page =>
                     {
-                        // Configura las propiedades básicas de la página: tamaño similar a la imagen de referencia
-                        page.Size(PageSizes.A4); // Mantenemos A4 pero ajustamos márgenes
-                        page.Margin(1.5f, Unit.Centimetre); // Márgenes más pequeños para aprovechar espacio
+                        page.Size(PageSizes.A4);
+                        page.Margin(1.5f, Unit.Centimetre);
                         page.DefaultTextStyle(x => x.FontSize(12).FontFamily("Calibri"));
                         
-                        // Configura la imagen de fondo usando el método correcto
                         string backgroundPath = Path.Combine(Directory.GetCurrentDirectory(), "Src", "assets", "background.jpg");
                         page.Background().Image(backgroundPath).FitArea();
 
-                        // NOTA IMPORTANTE:
-                        // Si el encabezado ("Ficha Técnica...") NO debe repetirse en cada página,
-                        // lo movemos de 'page.Header()' y lo colocamos como el primer elemento en 'page.Content()'.
-                        // 'page.Header()' ahora puede quedar vacío o contener elementos que SÍ deben repetirse,
-                        // como un logo corporativo o un pie de página que se repita arriba.
                         page.Header()
-                            .Height(30); // Damos un espacio para el encabezado aunque no tenga contenido repetitivo.
-                            // Si quieres un logo o algo que se repita en cada encabezado, lo pones aquí:
-                            // .Image("ruta/a/tu/logo.png").Height(20).AlignRight();
+                            .Height(30);
 
-                        // Define el contenido principal de la página.
                         page.Content()
-                            .PaddingVertical(20) // Añade relleno vertical para separar del encabezado/pie de página
-                            .Column(col => // Organiza el contenido en una columna vertical
+                            .PaddingVertical(20)
+                            .Column(col =>
                             {
-                                col.Spacing(12); // Espacio reducido entre elementos para aprovechar mejor el espacio
-                                
-                                // Espacio inicial para mejor presentación
+                                col.Spacing(12);
                                 col.Item().Height(8);
 
-                                // Título principal del documento, que ahora SOLO aparecerá en la primera página
                                 col.Item()
                                     .Row(row =>
                                     {
-                                        // Título principal a la izquierda
                                         row.RelativeItem(3)
                                             .Column(titleCol =>
                                             {
@@ -69,45 +49,69 @@ namespace ColombianCoffee.Src.Modules.PDFExport.Application.Services
                                                     .Text(varietyDetail.Name)
                                                     .FontSize(32)
                                                     .Bold()
-                                                    .FontColor(Color.FromHex("#3F2E24")) // Color marrón oscuro de la imagen
+                                                    .FontColor(Color.FromHex("#3F2E24"))
                                                     .FontFamily("Calibri");
-                                                
-                                                titleCol.Item().Height(8); // Espacio entre título y nombre científico
+                                                titleCol.Item().Height(8);
                                                 
                                                 titleCol.Item()
                                                     .Text(varietyDetail.ScientificName)
                                                     .FontSize(14)
                                                     .Italic()
-                                                    .FontColor(Color.FromHex("#3F2E24")) // Color marrón oscuro de la imagen
+                                                    .FontColor(Color.FromHex("#3F2E24"))
                                                     .FontFamily("Calibri");
                                                 
-                                                titleCol.Item().Height(12); // Espacio entre nombre científico y descripción
-                                                
-                                                // Descripción de la variedad (similar a la imagen de referencia)
+                                                titleCol.Item().Height(12);
                                                 titleCol.Item()
-                                                    .Text("Variedad de café con características agronómicas destacadas y excelente calidad de taza.")
+                                                    .Text(string.IsNullOrWhiteSpace(varietyDetail.History) ? "No disponible" : varietyDetail.History)
                                                     .FontSize(12)
-                                                    .FontColor(Color.FromHex("#3F2E24")) // Color marrón oscuro de la imagen
+                                                    .FontColor(Color.FromHex("#3F2E24"))
                                                     .FontFamily("Calibri");
                                             });
                                         
-                                        // Círculo marrón a la derecha (donde irá la imagen de la variedad de café)
                                         row.RelativeItem(1)
                                             .AlignCenter()
                                             .AlignMiddle()
-                                            .Width(60)
-                                            .Height(60)
-                                            .Background(Color.FromHex("#5C3F2B")); // Color marrón oscuro del círculo
+                                            .Width(80)
+                                            .Height(80)
+                                            .Background(Color.FromHex("#5C3F2B"))
+                                            .Element(container =>
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(varietyDetail.ImageUrl))
+                                                {
+                                                    // Construir la ruta completa de la imagen
+                                                    string imagePath = Path.Combine(Directory.GetCurrentDirectory(), varietyDetail.ImageUrl);
+                                                    if (File.Exists(imagePath))
+                                                    {
+                                                        container.Image(imagePath).FitArea();
+                                                    }
+                                                    else
+                                                    {
+                                                        // Si no existe la imagen, mostrar un texto indicativo
+                                                        container.Text("Imagen\nNo disponible")
+                                                            .FontSize(8)
+                                                            .FontColor(Color.FromHex("#FFFFFF"))
+                                                            .FontFamily("Calibri");
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    // Si no hay URL de imagen, mostrar texto indicativo
+                                                    container.Text("Sin\nImagen")
+                                                        .FontSize(8)
+                                                        .FontColor(Color.FromHex("#FFFFFF"))
+                                                        .FontFamily("Calibri");
+                                                }
+                                            });
                                     });
 
-                                col.Item().Height(25); // Espacio optimizado después del título
+                                col.Item().Height(25);
 
                                 // Sección: Agronomics (como en la imagen de referencia)
                                 col.Item()
                                     .Text("Agronomics")
                                     .FontSize(20)
                                     .Bold()
-                                    .FontColor(Color.FromHex("#3F2E24")) // Color marrón oscuro de la imagen
+                                    .FontColor(Color.FromHex("#3F2E24"))
                                     .FontFamily("Calibri");
                                 
                                 col.Item().Table(table =>
@@ -118,7 +122,6 @@ namespace ColombianCoffee.Src.Modules.PDFExport.Application.Services
                                         columns.RelativeColumn(3);
                                     });
                                     
-                                    // Filas con colores alternados
                                     AddTableRow(table, "Porte (altura)", varietyDetail.PlantHeight, 0);
                                     AddTableRow(table, "Tamaño de grano", varietyDetail.BeanSize, 1);
                                     AddTableRow(table, "Potencial de rendimiento", varietyDetail.YieldPotential, 0);
@@ -127,17 +130,17 @@ namespace ColombianCoffee.Src.Modules.PDFExport.Application.Services
                                     AddTableRow(table, "Requerimiento nutricional", varietyDetail.NutritionalRequirement ?? "No disponible", 1);
                                 });
                                 
-                                col.Item().Height(20); // Espacio optimizado entre secciones
+                                col.Item().Height(20);
                                 
                                 // Sección: Background (como en la imagen de referencia)
                                 col.Item()
                                     .Text("Background")
                                     .FontSize(20)
                                     .Bold()
-                                    .FontColor(Color.FromHex("#3F2E24")) // Color marrón oscuro de la imagen
+                                    .FontColor(Color.FromHex("#3F2E24"))
                                     .FontFamily("Calibri");
                                 
-                                                            col.Item().Table(table =>
+                                col.Item().Table(table =>
                             {
                                 table.ColumnsDefinition(columns =>
                                 {
@@ -145,20 +148,18 @@ namespace ColombianCoffee.Src.Modules.PDFExport.Application.Services
                                     columns.RelativeColumn(3);
                                 });
                                 
-                                // Datos de fondo de la variedad (como en la imagen de referencia)
                                 AddTableRow(table, "Origen", varietyDetail.LineageName ?? "No disponible", 0);
-                                AddTableRow(table, "Historia", varietyDetail.History ?? "No disponible", 1);
-                                AddTableRow(table, "Características", varietyDetail.SpeciesName ?? "No disponible", 0);
+                                AddTableRow(table, "Características", varietyDetail.SpeciesName ?? "No disponible", 1);
                             });
                                 
-                                col.Item().Height(20); // Espacio optimizado entre secciones
+                                col.Item().Height(20);
                                 
                                 // Sección: Condiciones de cultivo con tabla
                                 col.Item()
                                     .Text("Condiciones de Cultivo")
                                     .FontSize(20)
                                     .Bold()
-                                    .FontColor(Color.FromHex("#3F2E24")) // Color marrón oscuro de la imagen
+                                    .FontColor(Color.FromHex("#3F2E24"))
                                     .FontFamily("Calibri");
                                 
                                 col.Item().Table(table =>
@@ -175,50 +176,47 @@ namespace ColombianCoffee.Src.Modules.PDFExport.Application.Services
                                     
                                     if (varietyDetail.PlantingDensityValue.HasValue && !string.IsNullOrEmpty(varietyDetail.PlantingDensityUnit))
                                     {
-                                        AddTableRow(table, "Densidad de siembra", $"{varietyDetail.PlantingDensityValue} {varietyDetail.PlantingDensityUnit}", 0);
+                                        AddTableRow(table, "Densidad de siembra", $"{varietyDetail.PlantingDensityValue} {varietyDetail.PlantingDensityUnit}", 1);
                                     }
                                 });
                             });
 
-                        // Define el pie de página. Este se REPETIRÁ en cada página.
+                        // Pie de página
                         page.Footer()
-                            .Padding(12)
+                            .Padding(8)
                             .Row(row =>
                             {
-                                // Logo a la izquierda (imagen del logo más pequeño)
                                 row.RelativeItem(1)
                                     .AlignLeft()
                                     .AlignMiddle()
-                                    .Height(50) // Contenedor con altura específica para logo pequeño
+                                    .Height(50)
                                     .Image(Path.Combine(Directory.GetCurrentDirectory(), "Src", "assets", "logo.png"))
                                     .FitArea();
                                 
-                                // Información de generación al centro
                                 row.RelativeItem(2)
-                                    .AlignCenter()
+                                    .AlignLeft()
                                     .AlignMiddle()
                                     .Column(centerCol =>
                                     {
                                         centerCol.Item()
                                             .Text("Elaborado por: Colombian Coffee System")
                                             .FontSize(10)
-                                            .FontColor(Color.FromHex("#3F2E24")); // Color marrón oscuro de la imagen
+                                            .FontColor(Color.FromHex("#3F2E24"));
                                         
                                         centerCol.Item()
                                             .Text(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"))
                                             .FontSize(10)
                                             .Bold()
-                                            .FontColor(Color.FromHex("#3F2E24")); // Color marrón oscuro de la imagen
+                                            .FontColor(Color.FromHex("#3F2E24"));
                                     });
                                 
-                                // Espacio a la derecha (se quitó el círculo marrón)
                                 row.RelativeItem(1)
                                     .AlignRight()
                                     .AlignMiddle();
                             });
                     });
                 })
-                .GeneratePdf(outputPath); // Genera el archivo PDF en la ruta especificada
+                .GeneratePdf(outputPath);
             });
         }
 
