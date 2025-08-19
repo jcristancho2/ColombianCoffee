@@ -47,7 +47,15 @@ public class VarietyRepository : IVarietyRepository
 
     public async Task UpdateAsync(Variety variety)
     {
-        _dbContext.Varieties.Update(variety);
+        // Evitar conflicto de tracking si ya existe una instancia local con el mismo Id
+        var local = _dbContext.Varieties.Local.FirstOrDefault(v => v.Id == variety.Id);
+        if (local != null)
+        {
+            _dbContext.Entry(local).State = EntityState.Detached;
+        }
+
+        _dbContext.Attach(variety);
+        _dbContext.Entry(variety).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
     }
 

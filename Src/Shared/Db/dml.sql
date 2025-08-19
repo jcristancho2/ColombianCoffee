@@ -554,3 +554,81 @@ UPDATE varieties SET history = 'Robusta RDC es una variedad desarrollada en la R
 
 INSERT INTO app_user (username, password, role) VALUES
 ('admin', 'password123456', 'admin');
+
+-- =====================================================
+-- INSERCIÓN DE IMÁGENES PARA LAS VARIEDADES (USANDO IMÁGENES LOCALES)
+-- =====================================================
+
+-- Actualizar URLs de imágenes para variedades Arabica tradicionales
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Típica';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Borbón';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Tabi';
+UPDATE varieties SET image_url = 'Src/img/caturra.jpg' WHERE name = 'Caturra';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Variedad Colombia';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Maragogype';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Pacas';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Pacamara';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Geisha';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'SL28';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'SL34';
+UPDATE varieties SET image_url = 'Src/img/borbon.jpg' WHERE name = 'Mundo Novo';
+UPDATE varieties SET image_url = 'Src/img/catuai.jpg' WHERE name = 'Catuai';
+UPDATE varieties SET image_url = 'Src/img/castillo.jpg' WHERE name = 'Castillo';
+
+-- Actualizar URLs de imágenes para variedades Cenicafé (1-50)
+UPDATE varieties SET image_url = 'Src/img/cenicafe1.jpg' WHERE name = 'Cenicafé 1';
+UPDATE varieties SET image_url = 'Src/img/background.jpg' WHERE name = 'Cenicafé 6';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 10';
+UPDATE varieties SET image_url = 'Src/img/cenicafe16.jpg' WHERE name = 'Cenicafé 16';
+UPDATE varieties SET image_url = 'Src/img/cenicafe17.jpg' WHERE name = 'Cenicafé 17';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 18';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 19';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 20';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 21';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 22';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 23';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 24';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 25';
+UPDATE varieties SET image_url = 'Src/img/cenicafe20.jpg' WHERE name = 'Cenicafé 26';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 27';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 28';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 29';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 30';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 31';
+UPDATE varieties SET image_url = 'Src/img/cenicafe19.jpg' WHERE name = 'Cenicafé 32';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 33';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 34';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 35';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 36';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 37';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 38';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 39';
+UPDATE varieties SET image_url = 'Src/img/cenicafe18.jpg' WHERE name = 'Cenicafé 40';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 41';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 42';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 43';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 44';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 45';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 46';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 47';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 48';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 49';
+UPDATE varieties SET image_url = 'Src/img/cenicafe10.jpg' WHERE name = 'Cenicafé 50';
+
+-- Actualizar URLs de imágenes para variedades Robusta
+UPDATE varieties SET image_url = 'Src/img/bp534.jpg' WHERE name = 'BP 534';
+UPDATE varieties SET image_url = 'Src/img/bp939.jpg' WHERE name = 'BP 939';
+UPDATE varieties SET image_url = 'Src/img/brs1216.jpg' WHERE name = 'BRS 1216';
+UPDATE varieties SET image_url = 'Src/img/brs2314.jpg' WHERE name = 'BRS 2314';
+UPDATE varieties SET image_url = 'Src/img/brs3210.jpg' WHERE name = 'BRS 3210';
+UPDATE varieties SET image_url = 'Src/img/brs1216.jpg' WHERE name = 'TR4';
+UPDATE varieties SET image_url = 'Src/img/brs1216.jpg' WHERE name = 'Conilon';
+UPDATE varieties SET image_url = 'Src/img/brs1216.jpg' WHERE name = 'Robusta Uganda';
+UPDATE varieties SET image_url = 'Src/img/brs1216.jpg' WHERE name = 'Robusta Vietnam';
+UPDATE varieties SET image_url = 'Src/img/brs1216.jpg' WHERE name = 'Robusta India';
+UPDATE varieties SET image_url = 'Src/img/brs3210.jpg' WHERE name = 'Robusta Indonesia';
+UPDATE varieties SET image_url = 'Src/img/brs3210.jpg' WHERE name = 'Robusta Costa de Marfil';
+UPDATE varieties SET image_url = 'Src/img/brs3210.jpg' WHERE name = 'Robusta Madagascar';
+UPDATE varieties SET image_url = 'Src/img/brs3210.jpg' WHERE name = 'Robusta Camerún';
+UPDATE varieties SET image_url = 'Src/img/brs3210.jpg' WHERE name = 'Robusta RDC';
+

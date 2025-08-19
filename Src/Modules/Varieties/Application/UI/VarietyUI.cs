@@ -127,8 +127,9 @@ public sealed class VarietyUI : IVarietyUI
                 
                 try
                 {
-                    // En devcontainer, usar directorio relativo al workspace
-                    string exportDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
+                    // Usar directorio de documentos del usuario para mejor accesibilidad
+                    string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    string exportDirectory = Path.Combine(documentsPath, "ColombianCoffee", "Exports");
                     
                     if (!Directory.Exists(exportDirectory))
                         Directory.CreateDirectory(exportDirectory);
@@ -140,20 +141,30 @@ public sealed class VarietyUI : IVarietyUI
                     await _pdfGenerator.GenerateCoffeeVarietyDetailPdf(detail, fullPath);
                     
                     AnsiConsole.WriteLine($"PDF generado correctamente en: {fullPath}");
-                    AnsiConsole.WriteLine("¿Desea abrir el archivo? (S/N)");
-                    var abrir = AnsiConsole.Ask<string>("").ToUpper();
+                    var abrir = AnsiConsole.Confirm("¿Desea abrir el archivo?");
                     
-                    if (abrir == "S")
+                    if (abrir)
                     {
-                        // En devcontainer, mostrar la ruta y sugerir abrir manualmente
-                        AnsiConsole.WriteLine($"Archivo PDF generado en: {fullPath}");
-                        AnsiConsole.WriteLine("En devcontainer, abra el archivo manualmente desde su explorador de archivos.");
-                        AnsiConsole.WriteLine("O copie la ruta y ábrala desde su sistema host.");
+                        try
+                        {
+                            // Abrir el PDF automáticamente en el visor predeterminado del sistema
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = fullPath,
+                                UseShellExecute = true
+                            });
+                            AnsiConsole.WriteLine("✅ PDF abierto correctamente en tu visor predeterminado.");
+                        }
+                        catch (Exception openEx)
+                        {
+                            AnsiConsole.WriteLine($"⚠️ No se pudo abrir automáticamente: {openEx.Message}");
+                            AnsiConsole.WriteLine($"📁 Abre manualmente desde: {fullPath}");
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    AnsiConsole.WriteLine($"Error generando PDF: {ex.Message}");
+                    AnsiConsole.WriteLine($"❌ Error generando PDF: {ex.Message}");
                 }
                 
                 AnsiConsole.WriteLine("Presione cualquier tecla para continuar...");
@@ -187,7 +198,6 @@ public sealed class VarietyUI : IVarietyUI
                     detail.PlantingDensityValue.HasValue && !string.IsNullOrEmpty(detail.PlantingDensityUnit)
                         ? $"{detail.PlantingDensityValue} {detail.PlantingDensityUnit}"
                         : "-")
-                .AddRow("Unidad de altitud", detail.AltitudeUnit ?? "-")
                 .AddRow("Imagen", detail.ImageUrl ?? "-"));
                 AnsiConsole.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey();
