@@ -6,9 +6,9 @@
 
 ## 📖 Descripción del Proyecto
 
-Colombian Coffee es una aplicación de escritorio desarrollada en **C# (.NET 9)** con **Entity Framework Core** y **MySQL**, diseñada para catalogar, filtrar y gestionar las principales variedades de café cultivadas en Colombia [1](#2-0) .
+Colombian Coffee es una aplicación de escritorio desarrollada en **C# (.NET 9)** con **Entity Framework Core** y **MySQL**, diseñada para catalogar, filtrar y gestionar las principales variedades de café cultivadas en Colombia.
 
-La aplicación sigue principios **SOLID** y arquitectura **Puertos y Adaptadores (Vertical Slicing)**, con módulos independientes para autenticación, gestión de variedades y exportación a PDF [2](#2-1) .
+La aplicación sigue principios **SOLID** y arquitectura **Puertos y Adaptadores (Vertical Slicing)**, con módulos independientes para autenticación, gestión de variedades y exportación a PDF.
 
 ---
 
@@ -309,7 +309,3 @@ Este proyecto está bajo la licencia [MIT](LICENSE)
 
 ---
 
-## 
-
-Wiki pages you might want to explore:
-- [PDF Export System (jcristancho2/ColombianCoffee)](/wiki/jcristancho2/ColombianCoffee#6)
